@@ -18,6 +18,7 @@ chrome.webRequest.onBeforeRequest.addListener(function(details) {
 **/
 
 chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
+  console.log("Details: ");
   console.log(details);
 
   // block javascript tracking
@@ -32,6 +33,14 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
     chrome.tabs.get(details.tabId, function (tab) {
       var initiator = extractHostname(tab.url);
       var target = extractHostname(details.url);
+
+      var fromDomain = psl.parse(initiator).domain.split(".")[0];
+      var toDomain = psl.parse(target).domain.split(".")[0];
+      console.log("### fromDomain: ");
+      console.log(fromDomain);
+      console.log("### toDomain: ");
+      console.log(toDomain);
+
       if (!sameRootDomain(initiator, target)) {
         console.log("remove third party cookie : " + initiator + " -> " + target);
         for (var i = 0; i < details.requestHeaders.length; ++i) {

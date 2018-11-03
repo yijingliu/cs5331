@@ -19,7 +19,10 @@
     "128": "icon/128.png"
   },
   "background": {
-    "scripts": ["background.js"]
+    "scripts": [
+      "js/psl.min.js",
+      "background.js"
+    ]
   },
   "page_action": {
     "default_popup": "blocker.html",
