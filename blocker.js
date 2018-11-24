@@ -19,6 +19,11 @@ $(document).on("change", "input", function() {
   	console.log(response);
   });
 
+  chrome.extension.sendRequest({
+    "request_type": "update", 
+    "updates": JSON.stringify(message)}, function(response) {
+      console.log(response);
+    });
 });
 
 $(document).on("click", "#browser-fingerprint", function() {

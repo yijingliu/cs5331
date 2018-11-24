@@ -122,6 +122,7 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
       console.log("Update request");
       var user_selections = JSON.parse(request.updates);
       userSelections(user_selections);
+      sendResponse({result: "Success!"});
     }
 });
 
@@ -130,9 +131,8 @@ function extractHostname(url) {
   return url.hostname;
 }
 
-function userSelections(selections = "{}") {
-  var selections_dict = JSON.parse(selections);
-  var count = Object.keys(selections_dict).length;
+function userSelections(selections = {}) {
+  var count = Object.keys(selections).length;
 
   if (count === 0) {
     USER_SELECTIONS = selections_dict;
