@@ -23,7 +23,6 @@ $(document).ready(function() {
   	  if (Object.keys(response).length > 0) {
   	  	if(response["result"] != undefined) {
   	      response = response["result"];
-  	  	  console.log(response);
   	  	  appendDiv(response, "advertising");
   	  	  appendDiv(response, "site-analytics");
   	  	  appendDiv(response, "third-party-cookie");
@@ -79,7 +78,6 @@ function appendDiv(response, category) {
       text = text +  "</div>"; 
       record.innerHTML = text;
       document.getElementById(category + "-details").appendChild(record);
-      console.log(key, value);
     });
   }
 }
