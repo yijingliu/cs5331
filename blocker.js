@@ -20,8 +20,8 @@ $(document).on("change", "input", function() {
   });
 
   chrome.extension.sendRequest({
-    "request_type": "update", 
-    "updates": JSON.stringify(message)}, function(response) {
+    "request_type": "update",
+    "updates": message}, function(response) {
       console.log(response);
     });
 });

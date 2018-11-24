@@ -11,11 +11,11 @@ var ADVERTISING = "advertising",
 var USER_SELECTIONS = {
   "advertising": false,
   "site-analytics": false,
-  "third-party-cookie": true,
+  "third-party-cookie": false,
   "browser-fingerprint": {
     "user-agent": false,
     "content-language": false,
-    "timestamp": true
+    "timestamp": false
   }
 };
 
@@ -120,9 +120,8 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
       sendResponse({user_selections: user_selections});
     } else if (request.request_type == "update") {
       console.log("Update request");
-      var user_selections = JSON.parse(request.updates);
-      userSelections(user_selections);
-      sendResponse({result: "Success!"});
+      var user_selections = request.updates;
+      sendResponse({result: userSelections(user_selections)});
     }
 });
 
@@ -135,8 +134,10 @@ function userSelections(selections = {}) {
   var count = Object.keys(selections).length;
 
   if (count === 0) {
-    USER_SELECTIONS = selections_dict;
+    return USER_SELECTIONS;
   } else {
-    return JSON.stringify(USER_SELECTIONS);
+    USER_SELECTIONS = selections;
+    console.log(USER_SELECTIONS);
+    return "Success";
   }
 }
