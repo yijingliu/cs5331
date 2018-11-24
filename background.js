@@ -20,7 +20,7 @@ var USER_SELECTIONS = {
 };
 
 var BLOCKING_DETAILS = {},
-    STATS = {};
+    STATS = {"numbers": {"total": 0}};
 
 $(document).ready(function() {
   fetch("trackers/json/advertising.json")
@@ -30,6 +30,10 @@ $(document).ready(function() {
   fetch("trackers/json/site_analytics.json")
     .then(response => response.json())
     .then(json => initJson(json, SITE_ANALYTICS));
+
+  STATS["numbers"][ADVERTISING] = 0;
+  STATS["numbers"][SITE_ANALYTICS] = 0;
+  STATS["numbers"][THIRD_PARTY] = 0;
 });
 
 function initJson(json, category) {
@@ -75,6 +79,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
   var target = extractHostname(details.url);
   var toDomain = psl.parse(target).domain.split(".")[0];
 
+  STATS["numbers"]["total"]++;
   Object.keys(BLOCKING_DETAILS).forEach(function(key) {
     var tracker = BLOCKING_DETAILS[key][toDomain];
     updateStats(tab_id, key, tracker, target);
@@ -114,7 +119,11 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
 
   // block javascript tracking
   if (need_to_block) {
-    return {cancel: true};
+    if ((USER_SELECTIONS[ADVERTISING] && toDomain in BLOCKING_DETAILS[ADVERTISING]) ||
+      (USER_SELECTIONS[ADVERTISING] && toDomain in BLOCKING_DETAILS[ADVERTISING]))
+    {
+      return {cancel: true};
+    }
   }
 
   if (need_to_filter) {
@@ -169,6 +178,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       console.log(STATS);
       if (tab_id in STATS) {
         stats = STATS[request.tab_id];
+        stats["numbers"] = STATS["numbers"];
       }
       sendResponse({result: stats});
     }
@@ -195,6 +205,8 @@ function updateStats(tab_id, key, tracker, target) {
   if (tracker === undefined || tracker === null) {
     return;
   }
+
+  STATS["numbers"][key]++;
 
   if (tab_id in STATS) {
     if (key in STATS[tab_id]) {
