@@ -23,6 +23,7 @@ $(document).ready(function() {
   	  if (Object.keys(response).length > 0) {
   	  	if(response["result"] != undefined) {
   	      response = response["result"];
+  	      console.log(response["numbers"]);
   	  	  appendDiv(response, "advertising");
   	  	  appendDiv(response, "site-analytics");
   	  	  appendDiv(response, "third-party-cookie");
@@ -31,10 +32,6 @@ $(document).ready(function() {
     });
   });
 
-});
-
-$(document).on("mouseover", ".blocker-details-record", function() {
-  $(this).next(".blocker-details-tooltip").prop("visibility", "visible");
 });
 
 $(document).on("click", ".blocker-title-label", function() {
@@ -79,5 +76,6 @@ function appendDiv(response, category) {
       record.innerHTML = text;
       document.getElementById(category + "-details").appendChild(record);
     });
+    document.getElementById(category + "-counter").innerHTML = response["numbers"][category] == undefined ? 0 : response["numbers"][category];
   }
 }

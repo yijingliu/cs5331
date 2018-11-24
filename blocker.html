@@ -6,7 +6,6 @@
       width: 250px;
       max-height: 300px;
       margin: 0;
-      cursor: pointer;
     }
 
     .blocker-title {
@@ -15,6 +14,7 @@
       font-size: 12px;
       padding: 5px 0 5px 5px; 
       margin-top: 5px;
+      cursor: pointer;
     }
 
     .blocker-title-label {
@@ -22,8 +22,14 @@
       width: 220px;
     }
 
+    .blocker-title-counter {
+      float: right;
+      margin-right: 5px;
+    }
+
     .blocker-details {
       margin: 0 5px;
+      display: none;
     }
 
     .blocker-details div {
@@ -35,33 +41,42 @@
       margin-top: 2px;
       position: relative;
       display: inline-block;
-      border-bottom: 1px dotted black;
+      border-bottom: 1px dotted #000000;
+      cursor: default;
     }
 
     .blocker-details-tracker {
       display: inline-block;
-      width: 160px;
+      width: 120px;
       text-overflow: ellipsis;
       overflow: hidden;
     }
 
     .blocker-details-counter {
       display: inline-block;
-      margin-left: 10px;
       text-overflow: ellipsis;
       overflow: hidden;
+      float: right;
     }
 
     .blocker-details-tooltip {
       visibility: hidden;
-      width: 200px;
-      background-color: black;
-      color: #FFFFFF;
-      text-align: center;
-      border-radius: 6px;
-      padding: 5px 0;
+      display: inline-block;
+      max-width: 300px;
+      min-width: 200px;
+      background-color: #F1F1F2;
+      color: #000000;
+      text-align: left;
+      padding: 5px;
+      border: 1px solid #000000;
       position: absolute;
+      left: 30px;
+      top: 20px;
       z-index: 1;
+    }
+
+    .blocker-details-record:hover .blocker-details-tooltip {
+      visibility: visible;
     }
 
     .margin-5 { 
@@ -77,21 +92,30 @@
   <body id="blocker-body">
     <div class="blocker-title">
       <input type="checkbox" id="advertising" class="blocker-type">
-      <div class="blocker-title-label">Advertising</div>
+      <div class="blocker-title-label">
+        Advertising
+        <span class="blocker-title-counter" id="advertising-counter"></span>
+      </div>
     </div>
     <div id="advertising-details" class="blocker-details"></div>
     <div class="margin-5"></div>
     
     <div class="blocker-title">
       <input type="checkbox" id="site-analytics" class="blocker-type">
-      <div class="blocker-title-label">Site Analytics</div>
+      <div class="blocker-title-label">
+        Site Analytics
+        <span class="blocker-title-counter" id="site-analytics-counter"></span>
+      </div>
     </div>
     <div id="site-analytics-details" class="blocker-details"></div>
     <div class="margin-5"></div>
 
     <div class="blocker-title">
       <input type="checkbox" id="third-party-cookie" class="blocker-type">
-      <div class="blocker-title-label">Third Party Cookie</div>
+      <div class="blocker-title-label">
+        Third Party Cookie
+        <span class="blocker-title-counter" id="third-party-cookie-counter"></span>
+      </div>
     </div>
     <div id="third-party-cookie-details" class="blocker-details"></div>
     <div class="margin-5"></div>

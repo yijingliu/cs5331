@@ -210,8 +210,8 @@ function updateStats(tab_id, key, tracker, target) {
 
   if (tab_id in STATS) {
     if (key in STATS[tab_id]) {
-      if (tracker in STATS[tab_id]) {
-        STATS[tab_id][key][tracker]["counter"] ++;
+      if (tracker in STATS[tab_id][key]) {
+        STATS[tab_id][key][tracker]["counter"]++;
         if (!STATS[tab_id][key][tracker]["urls"].includes(target)) {
           STATS[tab_id][key][tracker]["urls"].push(target);
         }
