@@ -20,6 +20,7 @@
   },
   "background": {
     "scripts": [
+      "js/jquery-3.3.1.min.js",
       "js/psl.min.js",
       "background.js"
     ]
