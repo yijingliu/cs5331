@@ -13,8 +13,17 @@
       background: #336B87;
       color: #F1F1F2;
       font-size: 12px;
-      padding: 5px; 
+      padding: 5px 0 5px 5px; 
       margin-top: 5px;
+    }
+
+    .blocker-title-label {
+      display: inline-block;
+      width: 220px;
+    }
+
+    .blocker-details {
+      margin: 0 5px;
     }
 
     .blocker-details div {
@@ -22,8 +31,10 @@
     }
 
     .blocker-details-record {
+      width: 220px;
       margin-top: 2px;
       position: relative;
+      display: inline-block;
       border-bottom: 1px dotted black;
     }
 
@@ -56,7 +67,7 @@
     .margin-5 { 
       margin-top: 5px;
     }
-    
+
     </style>
     <script src="js/jquery-3.3.1.min.js"></script>
     <script src="js/psl.min.js"></script>
@@ -65,38 +76,29 @@
   </head>
   <body id="blocker-body">
     <div class="blocker-title">
-      <input type="checkbox" id="advertising" class="blocker-type">Advertising
+      <input type="checkbox" id="advertising" class="blocker-type">
+      <div class="blocker-title-label">Advertising</div>
     </div>
-    <div id="advertising-details" class="blocker-details">
-      <div class="blocker-details-record">
-        <div class="blocker-details-tracker">adroll.comqwerwtyruiop[werhjklwetryuiwertyuil</div>
-        <div class="blocker-details-counter">5</div>
-        <span class="blocker-details-tooltip">Tooltip text</span>
-
-      </div>
-      <div class="margin-2">
-        <div class="blocker-details-tracker">adroll.comqwerwtyruiop[werhjklwetryuiwertyuil</div>
-        <div class="blocker-details-counter">5</div>
-      </div>
-      
-
-    </div>
+    <div id="advertising-details" class="blocker-details"></div>
     <div class="margin-5"></div>
     
     <div class="blocker-title">
-      <input type="checkbox" id="site-analytics" class="blocker-type">Site Analytics
+      <input type="checkbox" id="site-analytics" class="blocker-type">
+      <div class="blocker-title-label">Site Analytics</div>
     </div>
     <div id="site-analytics-details" class="blocker-details"></div>
     <div class="margin-5"></div>
 
     <div class="blocker-title">
-      <input type="checkbox" id="third-party-cookie" class="blocker-type">Third Party Cookie
+      <input type="checkbox" id="third-party-cookie" class="blocker-type">
+      <div class="blocker-title-label">Third Party Cookie</div>
     </div>
     <div id="third-party-cookie-details" class="blocker-details"></div>
     <div class="margin-5"></div>
 
     <div class="blocker-title">
-      <input type="checkbox" id="browser-fingerprint" class="blocker-type">Browser Fingerprint
+      <input type="checkbox" id="browser-fingerprint" class="blocker-type">
+      <div class="blocker-title-label">Browser Fingerprint</div>
     </div>
 
     <div id="browser-fingerprint-details" class="blocker-details">
