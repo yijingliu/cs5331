@@ -3,8 +3,25 @@
   <head>
     <style>
     #blocker-body {
-      width: 200px;
-      height: 300px;
+      width: 300px;
+      max-height: 300px;
+      margin: 0;
+    }
+
+    .blocker-title {
+      background: #336B87;
+      color: #F1F1F2;
+      font-size: 12px;
+      padding: 5px; 
+      margin-top: 5px;
+    }
+
+    .blocker-details {
+      padding: 2px;
+    }
+
+    .blocker-details div {
+      padding: 2px 10px; 
     }
     </style>
     <script src="js/jquery-3.3.1.min.js"></script>
@@ -13,10 +30,36 @@
     <title>Tracker Blocker</title>
   </head>
   <body id="blocker-body">
-    <input type="checkbox" name="track-request" id="track-request"> track request
-    <div id="request-div">
-      
-    </div> 
-    <input type="checkbox" name="enable-cookie" id="enable-cookie"> enable cookie
+    <div class="blocker-title">
+      <input type="checkbox" id="advertising" class="blocker-type">Advertising
+    </div>
+    <div id="advertising-details" class="blocker-details"></div>
+    
+    <div class="blocker-title">
+      <input type="checkbox" id="site-analytics" class="blocker-type">Site Analytics
+    </div>
+    <div id="site-analytics-details" class="blocker-details"></div>
+
+    <div class="blocker-title">
+      <input type="checkbox" id="third-party-cookie" class="blocker-type">Third Party Cookie
+    </div>
+    <div id="third-party-cookie-details" class="blocker-details"></div>
+
+    <div class="blocker-title">
+      <input type="checkbox" id="browser-fingerprint" class="blocker-type">Browser Fingerprint
+    </div>
+    
+    <div id="browser-fingerprint-details" class="blocker-details">
+      <div>
+        <input type="checkbox" id="user-agent"> User Agent
+      </div>
+      <div>
+        <input type="checkbox" id="content-language"> Content Language
+      </div>
+      <div>
+        <input type="checkbox" id="timestamp"> Timestamp
+      </div>
+    </div>
+
   </body>
 </html>
