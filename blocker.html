@@ -6,6 +6,7 @@
       width: 300px;
       max-height: 300px;
       margin: 0;
+      cursor: pointer;
     }
 
     .blocker-title {
@@ -16,12 +17,12 @@
       margin-top: 5px;
     }
 
-    .blocker-details {
-      padding: 2px;
-    }
-
     .blocker-details div {
       padding: 2px 10px; 
+    }
+
+    .margin-5 { 
+      margin-top: 5px;
     }
     </style>
     <script src="js/jquery-3.3.1.min.js"></script>
@@ -34,21 +35,24 @@
       <input type="checkbox" id="advertising" class="blocker-type">Advertising
     </div>
     <div id="advertising-details" class="blocker-details"></div>
+    <div class="margin-5"></div>
     
     <div class="blocker-title">
       <input type="checkbox" id="site-analytics" class="blocker-type">Site Analytics
     </div>
     <div id="site-analytics-details" class="blocker-details"></div>
+    <div class="margin-5"></div>
 
     <div class="blocker-title">
       <input type="checkbox" id="third-party-cookie" class="blocker-type">Third Party Cookie
     </div>
     <div id="third-party-cookie-details" class="blocker-details"></div>
+    <div class="margin-5"></div>
 
     <div class="blocker-title">
       <input type="checkbox" id="browser-fingerprint" class="blocker-type">Browser Fingerprint
     </div>
-    
+
     <div id="browser-fingerprint-details" class="blocker-details">
       <div>
         <input type="checkbox" id="user-agent"> User Agent
@@ -60,6 +64,7 @@
         <input type="checkbox" id="timestamp"> Timestamp
       </div>
     </div>
+    <div class="margin-5"></div>
 
   </body>
 </html>
