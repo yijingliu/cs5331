@@ -33,13 +33,21 @@ $(document).ready(function() {
 });
 
 function initJson(json, category) {
+  if (!(category in BLOCKING_DETAILS)) {
+    BLOCKING_DETAILS[category] = {};
+  }
+
   for (var i=0; i<json.length;i++) {
     var tracker = json[i].tracker;
     var urls = json[i].tracker_url;
 
     for (var j=0; j<urls.length;j++) {
-      var k = url[j].split(".")[0];
-      BLOCKING_DETAILS[category][k] = tracker;
+      var k = urls[j].split(".")[0];
+      if (k in BLOCKING_DETAILS[category]) {
+        BLOCKING_DETAILS[category][k] = tracker;
+      } else {
+        BLOCKING_DETAILS[category] = {};
+      }
     }
   }
 }
@@ -160,6 +168,13 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       console.log("Update request");
       var user_selections = request.updates;
       sendResponse({result: userSelections(user_selections)});
+    } else if (request.request_type == "stats") {
+      if (request.tab_id in STATS) {
+        stats = STATS[request.tab_id];
+      } else {
+        stats = {};
+      }
+      sendResponse({result: stats});
     }
 });
 
