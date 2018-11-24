@@ -1,14 +1,19 @@
 "use strict";
 
 $(document).ready(function() {
-  chrome.extionsion.sendRequest({request_type: "init"}, function (response) {
-  	$("#advertising").prop('checked', response.advertising);
-  	$("#site-analytics").prop('checked', response.site-analytics);
-  	$("#third-party-cookie").prop('checked', response.third-party-cookie);
-  	$("#user-agent").prop('checked', response.user-agent);
-  	$("#content-language").prop('checked', response.content-language);
-  	$("#timestamp").prop('checked', response.timestamp);
-  	if (response.user-agent && response.content-language && response.timestamp) {
+  chrome.runtime.sendMessage({request_type: "init"}, function (response) {
+    console.log("Init from background");
+    console.log(response);
+
+  	$("#advertising").prop('checked', response["user_selections"]["advertising"]);
+  	$("#site-analytics").prop('checked', response["user_selections"]["site-analytics"]);
+  	$("#third-party-cookie").prop('checked', response["user_selections"]["third-party-cookie"]);
+  	$("#user-agent").prop('checked', response["user_selections"]["browser-fingerprint"]["user-agent"]);
+  	$("#content-language").prop('checked', response["user_selections"]["browser-fingerprint"]["content-language"]);
+  	$("#timestamp").prop('checked', response["user_selections"]["browser-fingerprint"]["timestamp"]);
+  	if (response["user_selections"]["browser-fingerprint"]["user-agent"] 
+      && response["user_selections"]["browser-fingerprint"]["content-language"] 
+      && response["user_selections"]["browser-fingerprint"]["timestamp"]) {
   	  $("#browser-fingerprint").prop('checked', true);
   	}
   });
@@ -32,7 +37,7 @@ $(document).on("change", "input", function() {
   chrome.runtime.sendMessage(message, function (response) {
     console.log(response);
   });
-  
+
   chrome.extension.sendRequest({
     "request_type": "update",
     "updates": message}, function(response) {

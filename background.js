@@ -113,6 +113,19 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
 }, {urls: ["<all_urls>"]}, ["blocking", "requestHeaders"]);
 
 
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    if (request.request_type == "init") {
+      console.log("Initiation request");
+      var user_selections = userSelections();
+      sendResponse({user_selections: user_selections});
+    } else if (request.request_type == "update") {
+      console.log("Update request");
+      var user_selections = request.updates;
+      sendResponse({result: userSelections(user_selections)});
+    }
+});
+
+
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
     if (request.request_type == "init") {
       console.log("Initiation request");
