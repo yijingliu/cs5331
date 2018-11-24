@@ -23,10 +23,25 @@ $(document).ready(function() {
   	  if (Object.keys(response).length > 0) {
   	  	if(response["result"] != undefined) {
   	      response = response["result"];
-  	      console.log(response["numbers"]);
   	  	  appendDiv(response, "advertising");
   	  	  appendDiv(response, "site-analytics");
   	  	  appendDiv(response, "third-party-cookie");
+
+  	  	  var numbers = response["numbers"];
+  	  	  var dataset =[];
+  	  	  
+  	  	  dataset = [
+		      { label: 'Advertising', count: numbers["advertising"] },
+		      { label: 'Site Analytics', count: numbers["site-analytics"] },
+		      { label: 'Others', count: numbers["total"] - numbers["advertising"] - numbers["site-analytics"] }
+	      ];
+  	  	  createChart(dataset, "#chart-one");
+
+  	  	  dataset = [
+		      { label: 'Cookie (3rd)', count: numbers["third-party-cookie"] },
+		      { label: 'Others', count: numbers["total"] - numbers["third-party-cookie"] }
+	      ];
+  	  	  createChart(dataset, "#chart-two");
   	  	}
   	  }
     });
@@ -76,6 +91,74 @@ function appendDiv(response, category) {
       record.innerHTML = text;
       document.getElementById(category + "-details").appendChild(record);
     });
-    document.getElementById(category + "-counter").innerHTML = response["numbers"][category] == undefined ? 0 : response["numbers"][category];
+    document.getElementById(category + "-counter").innerHTML = response["numbers"][category];
   }
+}
+
+
+
+
+function createChart(numbers, selector) {
+	(function(d3) {
+	    'use strict';
+	    var dataset = numbers
+
+	    var width = 200;
+	    var height = 200;
+	    var radius = Math.min(width, height) / 2;
+
+	    var color = d3.scaleOrdinal(d3.schemeCategory20c);
+	    var donutWidth = 40;
+		
+	    var svg = d3.select(selector)
+	      .append('svg')
+	      .attr('width', width)
+	      .attr('height', height)
+	      .append('g')
+	      .attr('transform', 'translate(' + (width / 2) +
+	        ',' + (height / 2) + ')');
+
+		var arc = d3.arc().innerRadius(radius - donutWidth).outerRadius(radius);
+
+	    var pie = d3.pie()
+	      .value(function(d) { return d.count; })
+	      .sort(null);	  
+
+	    var path = svg.selectAll('path')
+	      .data(pie(dataset))
+	      .enter()
+	      .append('path')
+	      .attr('d', arc)
+	      .attr('fill', function(d) {
+	        return color(d.data.label);
+	      });
+
+	    
+	    var legendRectSize = 12;
+		var legendSpacing = 4;	  
+		var legend = svg.selectAll('.legend')
+		.data(color.domain())
+		.enter()
+		.append('g')
+		.attr('class', 'legend')
+		.attr('transform', function(d,i) {
+		var height = legendRectSize + legendSpacing;
+		var offset = height * color.domain().length/2;
+		var horz = -3 * legendRectSize;
+		var vert = i * height - offset;
+		return 'translate(' + horz + ',' + vert + ')';
+		});
+		
+		legend.append('rect')
+		.attr('width', legendRectSize)
+		.attr('height', legendRectSize)
+		.style('fill', color)
+		.style('stroke', color);
+
+		legend.append('text')
+		.attr('x', legendRectSize + legendSpacing)
+		.attr('y', legendRectSize - legendSpacing)
+		.text(function(d) { return d; }); 
+		
+	  })(window.d3);
 }
