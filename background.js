@@ -180,7 +180,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       console.log(STATS);
       if (tab_id in STATS) {
         stats = STATS[request.tab_id];
-        stats["numbers"] = STATS["numbers"];
       }
       sendResponse({result: stats});
     }
