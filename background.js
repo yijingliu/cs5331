@@ -125,19 +125,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     }
 });
 
-
-chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
-    if (request.request_type == "init") {
-      console.log("Initiation request");
-      var user_selections = userSelections();
-      sendResponse({user_selections: user_selections});
-    } else if (request.request_type == "update") {
-      console.log("Update request");
-      var user_selections = request.updates;
-      sendResponse({result: userSelections(user_selections)});
-    }
-});
-
 function extractHostname(url) {
   url = new URL(url);
   return url.hostname;
