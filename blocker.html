@@ -3,7 +3,7 @@
   <head>
     <style>
     #blocker-body {
-      width: 300px;
+      width: 250px;
       max-height: 300px;
       margin: 0;
       cursor: pointer;
@@ -21,9 +21,42 @@
       padding: 2px 10px; 
     }
 
+    .blocker-details-record {
+      margin-top: 2px;
+      position: relative;
+      border-bottom: 1px dotted black;
+    }
+
+    .blocker-details-tracker {
+      display: inline-block;
+      width: 160px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    .blocker-details-counter {
+      display: inline-block;
+      margin-left: 10px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    .blocker-details-tooltip {
+      visibility: hidden;
+      width: 200px;
+      background-color: black;
+      color: #FFFFFF;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px 0;
+      position: absolute;
+      z-index: 1;
+    }
+
     .margin-5 { 
       margin-top: 5px;
     }
+    
     </style>
     <script src="js/jquery-3.3.1.min.js"></script>
     <script src="js/psl.min.js"></script>
@@ -34,7 +67,20 @@
     <div class="blocker-title">
       <input type="checkbox" id="advertising" class="blocker-type">Advertising
     </div>
-    <div id="advertising-details" class="blocker-details"></div>
+    <div id="advertising-details" class="blocker-details">
+      <div class="blocker-details-record">
+        <div class="blocker-details-tracker">adroll.comqwerwtyruiop[werhjklwetryuiwertyuil</div>
+        <div class="blocker-details-counter">5</div>
+        <span class="blocker-details-tooltip">Tooltip text</span>
+
+      </div>
+      <div class="margin-2">
+        <div class="blocker-details-tracker">adroll.comqwerwtyruiop[werhjklwetryuiwertyuil</div>
+        <div class="blocker-details-counter">5</div>
+      </div>
+      
+
+    </div>
     <div class="margin-5"></div>
     
     <div class="blocker-title">
