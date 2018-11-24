@@ -192,6 +192,10 @@ function userSelections(selections = {}) {
 }
 
 function updateStats(tab_id, key, tracker, target) {
+  if (tracker === undefined && tracker === null) {
+    return;
+  }
+
   if (tab_id in STATS) {
     if (key in STATS[tab_id]) {
       if (tracker in STATS[tab_id]) {
