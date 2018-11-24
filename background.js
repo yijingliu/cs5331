@@ -19,6 +19,31 @@ var USER_SELECTIONS = {
   }
 };
 
+var BLOCKING_DETAILS = {},
+    STATS = {};
+
+$(document).ready(function() {
+  fetch("trackers/json/advertising.json")
+    .then(response => response.json())
+    .then(json => initJson(json, ADVERTISING));
+
+  fetch("trackers/json/site_analytics.json")
+    .then(response => response.json())
+    .then(json => initJson(json, SITE_ANALYTICS));
+});
+
+function initJson(json, category) {
+  for (var i=0; i<json.length;i++) {
+    var tracker = json[i].tracker;
+    var urls = json[i].tracker_url;
+
+    for (var j=0; j<urls.length;j++) {
+      var k = url[j].split(".")[0];
+      BLOCKING_DETAILS[category][k] = tracker;
+    }
+  }
+}
+
 chrome.runtime.onInstalled.addListener(function() {
   chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
     chrome.declarativeContent.onPageChanged.addRules([{
@@ -40,12 +65,23 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
 
   var ret = {requestHeaders: details.requestHeaders};
 
+  var tab_id = details.tabId;
+  var target = extractHostname(details.url);
+  var toDomain = psl.parse(target).domain.split(".")[0];
+
   if (!need_to_block && !need_to_filter) {
     return ret;
   }
 
   // block javascript tracking
   if (need_to_block) {
+    Object.keys(BLOCKING_DETAILS).forEach(function(key) {
+      var tracker = BLOCKING_DETAILS[key][toDomain];
+
+      if (toDomain in BLOCKING_DETAILS[key]) {
+        updateStats(tab_id, key, tracker, target);
+      }
+    });
     return {cancel: true};
   }
 
@@ -57,20 +93,21 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
     try {
       chrome.tabs.get(details.tabId, function (tab) {
         var tab_url = tab.url;
-
         var initiator = extractHostname(tab_url);
-        var target = extractHostname(details.url);
-
         var fromDomain = psl.parse(initiator).domain;
         if (fromDomain === null || fromDomain == undefined) {
           fromDomain = "cs5331_g1";
         } else {
           fromDomain = fromDomain.split(".")[0];
         }
-        var toDomain = psl.parse(target).domain.split(".")[0];
+        
         console.log("### fromDomain: " + fromDomain + " ### toDomain: " + toDomain);
         if (fromDomain !== toDomain) {
           is_third_party = true;
+
+          if (USER_SELECTIONS[THIRD_PARTY]) {
+            updateStats(tab_id, THIRD_PARTY, tracker, target);
+          }
         }
       })
     } catch (e) {
@@ -78,12 +115,12 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
     }
   }
 
-  if (is_third_party && need_to_filter) {
+  if (need_to_filter) {
     console.log("### Begin to remove third party cookie");
 
     var idxToRemove = [];
     for (var i = 0; i < details.requestHeaders.length;) {
-      if (details.requestHeaders[i].name === "Cookie" && USER_SELECTIONS[THIRD_PARTY] === true) {
+      if (details.requestHeaders[i].name === "Cookie" && USER_SELECTIONS[THIRD_PARTY] === true && is_third_party) {
         console.log("removing header cookie")
         details.requestHeaders.splice(i, 1);
         continue;
@@ -101,12 +138,13 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
       i++;
     }
 
-    details.timeStamp = Math.round((new Date("1998-11-11T00:00:00")).getTime() / 1000);
-    console.log("### Finish removing.");
-
     if (USER_SELECTIONS[TIMEZONE] === true) {
+      console.log("update timestamp");
+      details.timeStamp = Math.round((new Date("1998-11-11T00:00:00")).getTime() / 1000);
       ret["timeStamp"] = details.timeStamp;
     }
+
+    console.log("### Finish removing.");
   }
 
   return ret;
@@ -139,5 +177,36 @@ function userSelections(selections = {}) {
     USER_SELECTIONS = selections;
     console.log(USER_SELECTIONS);
     return "Success";
+  }
+}
+
+function updateStats(tab_id, key, tracker, target) {
+  if (tab_id in STATS) {
+    if (key in STATS[tab_id]) {
+      if (tracker in STATS[tab_id]) {
+        STATS[tab_id][key][tracker]["counter"] ++;
+        if (!STATS[tab_id][key][tracker]["urls"].includes(target)) {
+          STATS[tab_id][key][tracker]["urls"].push(target);
+        }
+      } else {
+        STATS[tab_id][key][tracker] = {
+          counter: 1,
+          urls: [target]
+        };
+      }
+    } else {
+      STATS[tab_id][key] = {};
+      STATS[tab_id][key][tracker] = {
+        counter: 1,
+        urls: [target]
+      };
+    }
+  } else {
+    STATS[tab_id] = {};
+    STATS[tab_id][key] = {};
+    STATS[tab_id][key][tracker] = {
+      counter: 1,
+      urls: [target]
+    };
   }
 }
