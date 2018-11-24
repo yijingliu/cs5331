@@ -43,13 +43,11 @@ function initJson(json, category) {
 
     for (var j=0; j<urls.length;j++) {
       var k = urls[j].split(".")[0];
-      if (k in BLOCKING_DETAILS[category]) {
-        BLOCKING_DETAILS[category][k] = tracker;
-      } else {
-        BLOCKING_DETAILS[category] = {};
-      }
+      BLOCKING_DETAILS[category][k] = tracker;
     }
   }
+
+  console.log(BLOCKING_DETAILS[category]);
 }
 
 chrome.runtime.onInstalled.addListener(function() {
@@ -77,21 +75,10 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
   var target = extractHostname(details.url);
   var toDomain = psl.parse(target).domain.split(".")[0];
 
-  if (!need_to_block && !need_to_filter) {
-    return ret;
-  }
-
-  // block javascript tracking
-  if (need_to_block) {
-    Object.keys(BLOCKING_DETAILS).forEach(function(key) {
-      var tracker = BLOCKING_DETAILS[key][toDomain];
-
-      if (toDomain in BLOCKING_DETAILS[key]) {
-        updateStats(tab_id, key, tracker, target);
-      }
-    });
-    return {cancel: true};
-  }
+  Object.keys(BLOCKING_DETAILS).forEach(function(key) {
+    var tracker = BLOCKING_DETAILS[key][toDomain];
+    updateStats(tab_id, key, tracker, target);
+  });
 
   // remove third party cookie
   var is_third_party = false;
@@ -113,14 +100,21 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
         if (fromDomain !== toDomain) {
           is_third_party = true;
 
-          if (USER_SELECTIONS[THIRD_PARTY]) {
-            updateStats(tab_id, THIRD_PARTY, tracker, target);
-          }
+          updateStats(tab_id, THIRD_PARTY, toDomain, target);
         }
       })
     } catch (e) {
       console.log("Tab does not exist.")
     }
+  }
+
+  if (!need_to_block && !need_to_filter) {
+    return ret;
+  }
+
+  // block javascript tracking
+  if (need_to_block) {
+    return {cancel: true};
   }
 
   if (need_to_filter) {
@@ -169,10 +163,12 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       var user_selections = request.updates;
       sendResponse({result: userSelections(user_selections)});
     } else if (request.request_type == "stats") {
-      if (request.tab_id in STATS) {
+      var stats = {};
+      var tab_id = request.tab_id;
+      console.log("### Tab id is: " + tab_id + " and STATS are: ");
+      console.log(STATS);
+      if (tab_id in STATS) {
         stats = STATS[request.tab_id];
-      } else {
-        stats = {};
       }
       sendResponse({result: stats});
     }
