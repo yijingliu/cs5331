@@ -2,9 +2,7 @@
 
 $(document).ready(function() {
   chrome.runtime.sendMessage({request_type: "init"}, function (response) {
-    console.log("Init from background");
     console.log(response);
-
     $("#advertising").prop("checked", response["user_selections"]["advertising"]);
     $("#site-analytics").prop("checked", response["user_selections"]["site-analytics"]);
     $("#third-party-cookie").prop("checked", response["user_selections"]["third-party-cookie"]);
@@ -22,11 +20,14 @@ $(document).ready(function() {
   	var tabId = tabs[0].id; 
   	if (tabId != null && tabId != undefined)
   	chrome.runtime.sendMessage({"request_type": "stats", "tab_id": tabId, }, function (response) {
-  	  response = {};
-  	  if (response["advertising"]) {
-  	    $.each(response["advertising"], function(key, value) {
-  	      console.log(key, value);
-  	    });
+  	  if (Object.keys(response).length > 0) {
+  	  	if(response["result"] != undefined) {
+  	      response = response["result"];
+  	  	  console.log(response);
+  	  	  appendDiv(response, "advertising");
+  	  	  appendDiv(response, "site-analytics");
+  	  	  appendDiv(response, "third-party-cookie");
+  	  	}
   	  }
     });
   });
@@ -37,11 +38,8 @@ $(document).on("mouseover", ".blocker-details-record", function() {
   $(this).next(".blocker-details-tooltip").prop("visibility", "visible");
 });
 
-
-
-
-$(document).on("click", ".blocker-title", function() {
-  $(this).next(".blocker-details").toggle();
+$(document).on("click", ".blocker-title-label", function() {
+  $(this).parent(".blocker-title").next(".blocker-details").toggle();
 });
 
 $(document).on("click", "#browser-fingerprint", function() {
@@ -69,4 +67,19 @@ $(document).on("change", "input", function() {
   });
 });
 
-
+function appendDiv(response, category) {
+  if (response[category] != undefined) {
+    $.each(response[category], function(key, value) {
+      var record = document.createElement("div"); 
+      record.className = "blocker-details-record";
+      var text = "<div class=\"blocker-details-tracker\">" + key + "</div>";
+      text = text + "<div class=\"blocker-details-counter\">" + value.counter + "</div>" 
+      text = text + "<span class=\"blocker-details-tooltip\">";
+      text = text + value.urls.join("<br/>");
+      text = text +  "</div>"; 
+      record.innerHTML = text;
+      document.getElementById(category + "-details").appendChild(record);
+      console.log(key, value);
+    });
+  }
+}

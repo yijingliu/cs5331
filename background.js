@@ -192,7 +192,7 @@ function userSelections(selections = {}) {
 }
 
 function updateStats(tab_id, key, tracker, target) {
-  if (tracker === undefined && tracker === null) {
+  if (tracker === undefined || tracker === null) {
     return;
   }
 
