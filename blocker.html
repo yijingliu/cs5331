@@ -88,6 +88,15 @@
       margin-top: 5px;
     }
 
+    .details-key {
+      font-weight: 900;
+    }
+
+    .details-key, .details-value{
+      display: inline-block !important;
+      color: grey;
+    }
+
     </style>
     <script src="js/d3.v4.min.js"></script>
     <script src="js/jquery-3.3.1.min.js"></script>
@@ -134,5 +143,11 @@
     </div>
     <div class="margin-5"></div>
 
+    <div class="blocker-title">
+      <div class="blocker-title-label">My Fingerprint Details</div>
+    </div>
+
+    <div id="my-fingerprint" class="blocker-details" style="display: block;">
+    </div>
   </body>
 </html>

@@ -14,6 +14,13 @@ $(document).ready(function() {
       && response["user_selections"]["browser-fingerprint"]["timestamp"]) {
       $("#browser-fingerprint").prop("checked", true);
     }
+
+    var my_fingerprint = "";
+    Object.keys(response["fingerprint"]).forEach(function(key) {
+      my_fingerprint += "<div class=\"fingerprint-details\"><div class=\"details-key\">" + key + " : </div><div class=\"details-value\">" + response["fingerprint"][key] + "</div></div>";
+    });
+    console.log(my_fingerprint);
+    $("#my-fingerprint").html(my_fingerprint);
   });
 
   chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {

@@ -20,7 +20,8 @@ var USER_SELECTIONS = {
 };
 
 var BLOCKING_DETAILS = {},
-    STATS = {};
+    STATS = {},
+    MY_FINGERPRINT = {};
 
 $(document).ready(function() {
   fetch("trackers/json/advertising.json")
@@ -30,6 +31,29 @@ $(document).ready(function() {
   fetch("trackers/json/site_analytics.json")
     .then(response => response.json())
     .then(json => initJson(json, SITE_ANALYTICS));
+
+
+  // MY_FINGERPRINT["codeName"] = navigator.appCodeName;
+  // MY_FINGERPRINT["browserName"] = navigator.appName;
+  // MY_FINGERPRINT["browserVersion"] = navigator.appVersion;
+  MY_FINGERPRINT["cookieEnabled"] = navigator.cookieEnabled;
+  // MY_FINGERPRINT["doNotTrack"] = navigator.doNotTrack;
+  MY_FINGERPRINT["language"] = navigator.language;
+  MY_FINGERPRINT["platform"] = navigator.platform;
+  MY_FINGERPRINT["userAgent"] = navigator.userAgent;
+  MY_FINGERPRINT["timezone"] = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  var resolution = "";
+  resolution += window.screen.width + "x" + window.screen.height + "x" + window.screen.colorDepth;
+  MY_FINGERPRINT["resolution"] = resolution;
+  
+  var plugins_names = "";
+  for (var i=0;i<navigator.plugins.length;i++) {
+    plugins_names += navigator.plugins[i].name + ";";
+  }
+  MY_FINGERPRINT["plugins"] = plugins_names;
+
+  console.log(MY_FINGERPRINT);
 });
 
 function initJson(json, category) {
@@ -46,8 +70,6 @@ function initJson(json, category) {
       BLOCKING_DETAILS[category][k] = tracker;
     }
   }
-
-  console.log(BLOCKING_DETAILS[category]);
 }
 
 chrome.runtime.onInstalled.addListener(function() {
@@ -167,8 +189,12 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.request_type == "init") {
       console.log("Initiation request");
-      var user_selections = userSelections();
-      sendResponse({user_selections: user_selections});
+      var resp = {
+        user_selections: userSelections(),
+        fingerprint: MY_FINGERPRINT
+      };
+
+      sendResponse(resp);
     } else if (request.request_type == "update") {
       console.log("Update request");
       var user_selections = request.updates;
