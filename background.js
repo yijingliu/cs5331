@@ -211,7 +211,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
     if (USER_SELECTIONS[FINGERPRINT][TIMEZONE] === true) {
       console.log("update timestamp");
       details.timeStamp = Math.round((new Date("1998-11-11T00:00:00")).getTime() / 1000);
-      ret["timeStamp"] = details.timeStamp;
+      // ret["timeStamp"] = details.timeStamp;
       is_updated = true;
     }
 
