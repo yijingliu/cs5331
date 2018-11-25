@@ -100,6 +100,9 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
 
   var tab_id = details.tabId;
   var target = extractHostname(details.url);
+  if (psl.parse(target).domain == null) {
+    console.log("### Domain is null: " + target);
+  }
   var toDomain = psl.parse(target).domain.split(".")[0];
 
   if (!(tab_id in STATS)) {
@@ -114,34 +117,43 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
     updateStats(tab_id, key, tracker, target);
   });
 
+  if (details.url === "https://adservice.google.com/adsid/integrator.js?domain=stackoverflow.com") {
+    console.log("I'm here");
+  }
+
   // remove third party cookie
   var is_third_party = false;
   if (details.tabId == -1) {
     is_third_party = true;
   } else {
+    var initiator = "";
     try {
       chrome.tabs.get(details.tabId, function (tab) {
         if (tab == null) {
           return;
         }
         var tab_url = tab.url;
-        var initiator = extractHostname(tab_url);
-        var fromDomain = psl.parse(initiator).domain;
-        if (fromDomain === null || fromDomain == undefined) {
-          fromDomain = "cs5331_g1";
-        } else {
-          fromDomain = fromDomain.split(".")[0];
-        }
-        
-        console.log("### fromDomain: " + fromDomain + " ### toDomain: " + toDomain);
-        if (fromDomain !== toDomain) {
-          is_third_party = true;
-
-          updateStats(tab_id, THIRD_PARTY, toDomain, target);
-        }
-      })
+        initiator = extractHostname(tab_url);
+      });
     } catch (e) {
       console.log("Tab does not exist.")
+    }
+
+    if (initiator === "") {
+      initiator = details.initiator.split("//")[1];
+    }
+    var fromDomain = psl.parse(initiator).domain;
+    if (fromDomain === null || fromDomain == undefined) {
+      fromDomain = "cs5331_g1";
+    } else {
+      fromDomain = fromDomain.split(".")[0];
+    }
+    
+    console.log("### fromDomain: " + fromDomain + " ### toDomain: " + toDomain);
+    if (fromDomain !== toDomain) {
+      is_third_party = true;
+
+      updateStats(tab_id, THIRD_PARTY, toDomain, target);
     }
   }
 
@@ -212,7 +224,6 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
     if (USER_SELECTIONS[FINGERPRINT][TIMEZONE] === true) {
       console.log("update timestamp");
       details.timeStamp = Math.round((new Date("1998-11-11T00:00:00")).getTime() / 1000);
-      // ret["timeStamp"] = details.timeStamp;
       is_updated = true;
     }
 
