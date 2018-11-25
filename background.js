@@ -119,6 +119,9 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
   } else {
     try {
       chrome.tabs.get(details.tabId, function (tab) {
+        if (tab == null) {
+          return;
+        }
         var tab_url = tab.url;
         var initiator = extractHostname(tab_url);
         var fromDomain = psl.parse(initiator).domain;
@@ -184,13 +187,13 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
         is_updated = true;
         continue;
       }
-      if (details.requestHeaders[i].name === "User-Agent" && USER_SELECTIONS[USER_AGENT] === true) {
+      if (details.requestHeaders[i].name === "User-Agent" && USER_SELECTIONS[FINGERPRINT][USER_AGENT] === true) {
         console.log("removing header user agent");
         details.requestHeaders.splice(i, 1);
         is_updated = true;
         continue;
       }
-      if (details.requestHeaders[i].name === "Accept-Language" && USER_SELECTIONS[CONTENT_LANG] === true) {
+      if (details.requestHeaders[i].name === "Accept-Language" && USER_SELECTIONS[FINGERPRINT][CONTENT_LANG] === true) {
         console.log("removing header accept language");
         details.requestHeaders.splice(i, 1);
         is_updated = true;
@@ -199,14 +202,14 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
       i++;
     }
 
-    if (USER_SELECTIONS[TIMEZONE] === true) {
+    if (USER_SELECTIONS[FINGERPRINT][TIMEZONE] === true) {
       console.log("update timestamp");
       details.timeStamp = Math.round((new Date("1998-11-11T00:00:00")).getTime() / 1000);
       ret["timeStamp"] = details.timeStamp;
       is_updated = true;
     }
 
-    if (is_updated) {
+    if (is_updated === true) {
       if (!(tab_id in BLOCKED_REQUESTS)) {
         BLOCKED_REQUESTS[tab_id] = {};
       }
