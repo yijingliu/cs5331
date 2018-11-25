@@ -8,6 +8,11 @@
       margin: 0;
     }
 
+    .chart {
+      width: 200px;
+      margin: 10px auto;
+    }
+
     .blocker-title {
       background: #336B87;
       color: #F1F1F2;
@@ -84,40 +89,37 @@
     }
 
     </style>
+    <script src="js/d3.v4.min.js"></script>
     <script src="js/jquery-3.3.1.min.js"></script>
     <script src="js/psl.min.js"></script>
     <script src="blocker.js"></script>
     <title>Tracker Blocker</title>
   </head>
   <body id="blocker-body">
+    <div id="chart-one" class="chart"></div>
+
     <div class="blocker-title">
       <input type="checkbox" id="advertising" class="blocker-type">
-      <div class="blocker-title-label">
-        Advertising
-        <span class="blocker-title-counter" id="advertising-counter"></span>
-      </div>
+      <div class="blocker-title-label">Advertising<span class="blocker-title-counter" id="advertising-counter"></span></div>
     </div>
     <div id="advertising-details" class="blocker-details"></div>
     <div class="margin-5"></div>
     
     <div class="blocker-title">
       <input type="checkbox" id="site-analytics" class="blocker-type">
-      <div class="blocker-title-label">
-        Site Analytics
-        <span class="blocker-title-counter" id="site-analytics-counter"></span>
-      </div>
+      <div class="blocker-title-label">Site Analytics<span class="blocker-title-counter" id="site-analytics-counter"></span></div>
     </div>
     <div id="site-analytics-details" class="blocker-details"></div>
     <div class="margin-5"></div>
 
+
     <div class="blocker-title">
       <input type="checkbox" id="third-party-cookie" class="blocker-type">
-      <div class="blocker-title-label">
-        Third Party Cookie
-        <span class="blocker-title-counter" id="third-party-cookie-counter"></span>
-      </div>
+      <div class="blocker-title-label">Third Party Cookie<span class="blocker-title-counter" id="third-party-cookie-counter"></span></div>
     </div>
-    <div id="third-party-cookie-details" class="blocker-details"></div>
+    <div id="third-party-cookie-details" class="blocker-details">
+      <div id="chart-two" class="chart"></div>
+    </div>
     <div class="margin-5"></div>
 
     <div class="blocker-title">
@@ -125,16 +127,10 @@
       <div class="blocker-title-label">Browser Fingerprint</div>
     </div>
 
-    <div id="browser-fingerprint-details" class="blocker-details">
-      <div>
-        <input type="checkbox" id="user-agent"> User Agent
-      </div>
-      <div>
-        <input type="checkbox" id="content-language"> Content Language
-      </div>
-      <div>
-        <input type="checkbox" id="timestamp"> Timestamp
-      </div>
+    <div id="browser-fingerprint-details" class="blocker-details" style="display: block;">
+      <div><input type="checkbox" id="user-agent"> User Agent</div>
+      <div><input type="checkbox" id="content-language"> Content Language</div>
+      <div><input type="checkbox" id="timestamp"> Timestamp</div>
     </div>
     <div class="margin-5"></div>
 
