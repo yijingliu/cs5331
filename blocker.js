@@ -15,13 +15,12 @@ $(document).ready(function() {
       $("#browser-fingerprint").prop("checked", true);
     }
 
-    var my_fingerprint = "<div>";
+    var my_fingerprint = "";
     Object.keys(response["fingerprint"]).forEach(function(key) {
-      my_fingerprint += key + "\t: " + response["fingerprint"][key] + "<br/>";
+      my_fingerprint += "<div class=\"fingerprint-details\"><div class=\"details-key\">" + key + " : </div><div class=\"details-value\">" + response["fingerprint"][key] + "</div></div>";
     });
-    my_fingerprint += "</div>";
     console.log(my_fingerprint);
-    $("#my-browser-fingerprint").html(my_fingerprint);
+    $("#my-fingerprint").html(my_fingerprint);
   });
 
   chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
