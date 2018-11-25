@@ -20,7 +20,8 @@ var USER_SELECTIONS = {
 };
 
 var BLOCKING_DETAILS = {},
-    STATS = {};
+    STATS = {},
+    MY_FINGERPRINT = {};
 
 $(document).ready(function() {
   fetch("trackers/json/advertising.json")
@@ -30,6 +31,30 @@ $(document).ready(function() {
   fetch("trackers/json/site_analytics.json")
     .then(response => response.json())
     .then(json => initJson(json, SITE_ANALYTICS));
+
+
+  MY_FINGERPRINT["codeName"] = navigator.appCodeName;
+  MY_FINGERPRINT["browserName"] = navigator.appName;
+  MY_FINGERPRINT["browserVersion"] = navigator.appVersion;
+  MY_FINGERPRINT["cookieEnabled"] = navigator.cookieEnabled;
+  MY_FINGERPRINT["doNotTrack"] = navigator.doNotTrack;
+  MY_FINGERPRINT["language"] = navigator.language;
+  MY_FINGERPRINT["platform"] = navigator.platform;
+  MY_FINGERPRINT["userAgent"] = navigator.userAgent;
+  // MY_FINGERPRINT["timezone"] = new Date().getTimezoneOffset();
+  MY_FINGERPRINT["timezone"] = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  var resolution = "";
+  resolution += window.screen.width + "x" + window.screen.height + "x" + window.screen.colorDepth;
+  MY_FINGERPRINT["resolution"] = resolution;
+  
+  var plugins_names = "";
+  for (var i=0;i<navigator.plugins.length;i++) {
+    plugins_names += navigator.plugins[i].name + ";";
+  }
+  MY_FINGERPRINT["plugins"] = plugins_names;
+
+  console.log(MY_FINGERPRINT);
 });
 
 function initJson(json, category) {
@@ -46,8 +71,6 @@ function initJson(json, category) {
       BLOCKING_DETAILS[category][k] = tracker;
     }
   }
-
-  console.log(BLOCKING_DETAILS[category]);
 }
 
 chrome.runtime.onInstalled.addListener(function() {
