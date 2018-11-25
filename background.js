@@ -290,8 +290,12 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 });
 
 chrome.tabs.onUpdated.addListener(function(tabId,changeInfo,tab){
-  if (changeInfo.url === undefined){
+  if (changeInfo.url === undefined) {
+    console.log("Tab " + tabId + " refreshed!");
     STATS[tabId] = {"numbers": {"total": 0}};
+    STATS[tabId]["numbers"][ADVERTISING] = 0;
+    STATS[tabId]["numbers"][SITE_ANALYTICS] = 0;
+    STATS[tabId]["numbers"][THIRD_PARTY] = 0;
     BLOCKED_REQUESTS[tabId] = {};
   }
 });
