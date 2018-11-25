@@ -36,11 +36,9 @@ $(document).ready(function() {
   // MY_FINGERPRINT["codeName"] = navigator.appCodeName;
   // MY_FINGERPRINT["browserName"] = navigator.appName;
   // MY_FINGERPRINT["browserVersion"] = navigator.appVersion;
-  MY_FINGERPRINT["cookieEnabled"] = navigator.cookieEnabled;
+  MY_FINGERPRINT["cookie"] = navigator.cookieEnabled ? "enabled" : "disabled";
   // MY_FINGERPRINT["doNotTrack"] = navigator.doNotTrack;
   MY_FINGERPRINT["language"] = navigator.language;
-  MY_FINGERPRINT["platform"] = navigator.platform;
-  MY_FINGERPRINT["userAgent"] = navigator.userAgent;
   MY_FINGERPRINT["timezone"] = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   var resolution = "";
@@ -52,6 +50,9 @@ $(document).ready(function() {
     plugins_names += navigator.plugins[i].name + ";";
   }
   MY_FINGERPRINT["plugins"] = plugins_names;
+
+  MY_FINGERPRINT["platform"] = navigator.platform;
+  MY_FINGERPRINT["user-agent"] = navigator.userAgent;
 
   console.log(MY_FINGERPRINT);
 });

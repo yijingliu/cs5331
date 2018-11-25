@@ -17,7 +17,10 @@ $(document).ready(function() {
 
     var my_fingerprint = "";
     Object.keys(response["fingerprint"]).forEach(function(key) {
-      my_fingerprint += "<div class=\"fingerprint-details\"><div class=\"details-key\">" + key + " : </div><div class=\"details-value\">" + response["fingerprint"][key] + "</div></div>";
+      if (key === "plugins") {
+      	response["fingerprint"][key] = response["fingerprint"][key].split(";").join("<br/>");
+      }
+      my_fingerprint += "<div class=\"fingerprint-details\"><div class=\"details-key\">" + key + "</div>:<div class=\"details-value\">" + response["fingerprint"][key] + "</div></div>";
     });
     console.log(my_fingerprint);
     $("#my-fingerprint").html(my_fingerprint);
@@ -35,20 +38,23 @@ $(document).ready(function() {
   	  	  appendDiv(response, "third-party-cookie");
 
   	  	  var numbers = response["numbers"];
-  	  	  var dataset =[];
+  	  	  if (numbers != undefined) {
+  	  	  	var dataset =[];
   	  	  
-  	  	  dataset = [
+	  	  	dataset = [
 		      { label: 'Advertising', count: numbers["advertising"] },
 		      { label: 'Site Analytics', count: numbers["site-analytics"] },
 		      { label: 'Others', count: numbers["total"] - numbers["advertising"] - numbers["site-analytics"] }
-	      ];
-  	  	  createChart(dataset, "#chart-one");
+		    ];
+	  	  	createChart(dataset, "#chart-one");
 
-  	  	  dataset = [
+	  	    dataset = [
 		      { label: 'Cookie (3rd)', count: numbers["third-party-cookie"] },
 		      { label: 'Others', count: numbers["total"] - numbers["third-party-cookie"] }
-	      ];
-  	  	  createChart(dataset, "#chart-two");
+		    ];
+	  	  	createChart(dataset, "#chart-two");
+  	  	  }
+  	  	  
   	  	}
   	  }
     });
@@ -129,7 +135,18 @@ function createChart(numbers, selector) {
 
 	    var pie = d3.pie()
 	      .value(function(d) { return d.count; })
-	      .sort(null);	  
+	      .sort(null);	
+
+	    var tooltip = d3.select('#chart-one')  
+		  .append('div')  
+		  .attr('class', 'chart-tooltip');  
+		  tooltip.append('div')  
+		  .attr('class', 'label');  
+		  tooltip.append('div')  
+		  .attr('class', 'count');  
+		  tooltip.append('div')  
+		  .attr('class', 'percent');  
+		  
 
 	    var path = svg.selectAll('path')
 	      .data(pie(dataset))
@@ -140,6 +157,23 @@ function createChart(numbers, selector) {
 	        return color(d.data.label);
 	      });
 
+	    path.on('mouseover', function(d) {  
+		var total = d3.sum(dataset.map(function(d) {  
+		return d.count;  
+		}));  
+		var percent = Math.round(1000 * d.data.count / total) / 10;  
+		tooltip.select('.label').html(d.data.label);  
+		tooltip.select('.count').html(d.data.count);  
+		tooltip.select('.percent').html(percent + '%');  
+		tooltip.style('display', 'block');  
+		});  
+		path.on('mouseout', function() {  
+		tooltip.style('display', 'none');  
+		});  
+		path.on('mousemove', function(d) {  
+		tooltip.style('top', (d3.event.layerY + 10) + 'px')  
+		.style('left', (d3.event.layerX - 50) + 'px');  
+		});  
 	    
 	    var legendRectSize = 12;
 		var legendSpacing = 4;	  

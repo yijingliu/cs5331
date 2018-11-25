@@ -13,6 +13,21 @@
       margin: 10px auto;
     }
 
+    .chart-tooltip {  
+      background: #F1F1F2;  
+      box-shadow: 0 0 5px #999999;  
+      color: #000000;
+      display: none;  
+      font-size: 12px;  
+      left: 70px;  
+      padding: 10px;  
+      position: absolute;  
+      text-align: center;  
+      top: 95px;  
+      width: 80px;  
+      z-index: 10;  
+    }
+
     .blocker-title {
       background: #336B87;
       color: #F1F1F2;
@@ -71,9 +86,9 @@
       min-width: 200px;
       background-color: #F1F1F2;
       color: #000000;
+      box-shadow: 0 0 5px #999999; 
       text-align: left;
       padding: 5px;
-      border: 1px solid #000000;
       position: absolute;
       left: 30px;
       top: 20px;
@@ -88,13 +103,43 @@
       margin-top: 5px;
     }
 
-    .details-key {
+    #my-fingerprint-title {
+      position: relative;
+      top: 10px;
+      left: 20px;
+      background: #FFFFFF;
+      display: inline-block;
       font-weight: 900;
+      color: #336B87;
     }
 
-    .details-key, .details-value{
-      display: inline-block !important;
+    #my-fingerprint {
+      border: #336B87 solid 2px;
+      padding: 10px 10px 2px;
+    }
+
+    .fingerprint-details {
+      padding: 0 !important;
       color: grey;
+      font-size: 10px;
+    }
+
+    .fingerprint-details div{
+      display: inline-block;
+      vertical-align: top;
+      padding: 2px 5px;
+    }
+
+    .details-key {
+      font-weight: 900;
+      text-align: right;
+      width: 60px;
+      padding-left: 0 !important;
+    }
+
+    .details-value{
+      width: 140px;
+      padding-right: 0 !important;
     }
 
     </style>
@@ -140,14 +185,12 @@
       <div><input type="checkbox" id="user-agent"> User Agent</div>
       <div><input type="checkbox" id="content-language"> Content Language</div>
       <div><input type="checkbox" id="timestamp"> Timestamp</div>
+
+      <div id="my-fingerprint-title">My Fingerprint</div>
+      <div id="my-fingerprint"></div>
+      <div class="margin-5"></div>
     </div>
     <div class="margin-5"></div>
 
-    <div class="blocker-title">
-      <div class="blocker-title-label">My Fingerprint Details</div>
-    </div>
-
-    <div id="my-fingerprint" class="blocker-details" style="display: block;">
-    </div>
   </body>
 </html>
