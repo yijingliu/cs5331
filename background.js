@@ -33,15 +33,14 @@ $(document).ready(function() {
     .then(json => initJson(json, SITE_ANALYTICS));
 
 
-  MY_FINGERPRINT["codeName"] = navigator.appCodeName;
-  MY_FINGERPRINT["browserName"] = navigator.appName;
-  MY_FINGERPRINT["browserVersion"] = navigator.appVersion;
+  // MY_FINGERPRINT["codeName"] = navigator.appCodeName;
+  // MY_FINGERPRINT["browserName"] = navigator.appName;
+  // MY_FINGERPRINT["browserVersion"] = navigator.appVersion;
   MY_FINGERPRINT["cookieEnabled"] = navigator.cookieEnabled;
-  MY_FINGERPRINT["doNotTrack"] = navigator.doNotTrack;
+  // MY_FINGERPRINT["doNotTrack"] = navigator.doNotTrack;
   MY_FINGERPRINT["language"] = navigator.language;
   MY_FINGERPRINT["platform"] = navigator.platform;
   MY_FINGERPRINT["userAgent"] = navigator.userAgent;
-  // MY_FINGERPRINT["timezone"] = new Date().getTimezoneOffset();
   MY_FINGERPRINT["timezone"] = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   var resolution = "";
@@ -190,8 +189,12 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.request_type == "init") {
       console.log("Initiation request");
-      var user_selections = userSelections();
-      sendResponse({user_selections: user_selections});
+      var resp = {
+        user_selections: userSelections(),
+        fingerprint: MY_FINGERPRINT
+      };
+
+      sendResponse(resp);
     } else if (request.request_type == "update") {
       console.log("Update request");
       var user_selections = request.updates;
