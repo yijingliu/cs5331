@@ -131,10 +131,14 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
     }
 
     if (initiator === "") {
-      initiator = details.initiator.split("//")[1];
+      if (details.initiator == null) {
+        initiator = "www.cs5331_g1.com";
+      } else {
+        initiator = details.initiator.split("//")[1];
+      }
     }
     var fromDomain = psl.parse(initiator).domain;
-    if (fromDomain === null || fromDomain == undefined) {
+    if (fromDomain == null) {
       fromDomain = "cs5331_g1";
     } else {
       fromDomain = fromDomain.split(".")[0];
@@ -283,6 +287,13 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       }
       sendResponse({result: stats});
     }
+});
+
+chrome.tabs.onUpdated.addListener(function(tabId,changeInfo,tab){
+  if (changeInfo.url === undefined){
+    STATS[tabId] = {"numbers": {"total": 0}};
+    BLOCKED_REQUESTS[tabId] = {};
+  }
 });
 
 function extractHostname(url) {
