@@ -56,8 +56,6 @@ $(document).ready(function() {
 
   MY_FINGERPRINT["platform"] = navigator.platform;
   MY_FINGERPRINT["user-agent"] = navigator.userAgent;
-
-  console.log(MY_FINGERPRINT);
 });
 
 function initJson(json, category) {
@@ -88,9 +86,6 @@ chrome.runtime.onInstalled.addListener(function() {
 });
 
 chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
-  console.log("Details: ");
-  console.log(details);
-
   var need_to_block = USER_SELECTIONS[ADVERTISING] || USER_SELECTIONS[SITE_ANALYTICS];
   var need_to_filter = USER_SELECTIONS[THIRD_PARTY] || USER_SELECTIONS[FINGERPRINT][USER_AGENT]
   || USER_SELECTIONS[FINGERPRINT][CONTENT_LANG] || USER_SELECTIONS[FINGERPRINT][TIMEZONE];
@@ -116,10 +111,6 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
     var tracker = BLOCKING_DETAILS[key][toDomain];
     updateStats(tab_id, key, tracker, target);
   });
-
-  if (details.url === "https://adservice.google.com/adsid/integrator.js?domain=stackoverflow.com") {
-    console.log("I'm here");
-  }
 
   // remove third party cookie
   var is_third_party = false;
@@ -152,7 +143,6 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
     console.log("### fromDomain: " + fromDomain + " ### toDomain: " + toDomain);
     if (fromDomain !== toDomain) {
       is_third_party = true;
-
       updateStats(tab_id, THIRD_PARTY, toDomain, target);
     }
   }
@@ -307,7 +297,6 @@ function userSelections(selections = {}) {
     return USER_SELECTIONS;
   } else {
     USER_SELECTIONS = selections;
-    console.log(USER_SELECTIONS);
     return "Success";
   }
 }
