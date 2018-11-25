@@ -24,6 +24,8 @@ var BLOCKING_DETAILS = {},
     MY_FINGERPRINT = {},
     BLOCKED_REQUESTS = {};
 
+var MAX_LENGTH = 1000;
+
 $(document).ready(function() {
   fetch("trackers/json/advertising.json")
     .then(response => response.json())
@@ -158,7 +160,9 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
         BLOCKED_REQUESTS[tab_id][ADVERTISING] = [];
       }
 
-      BLOCKED_REQUESTS[tab_id][ADVERTISING].push(original_req);
+      if (BLOCKED_REQUESTS[tab_id][ADVERTISING].length < MAX_LENGTH) {
+        BLOCKED_REQUESTS[tab_id][ADVERTISING].push(original_req);
+      }
 
       return {cancel: true};
     } else if (USER_SELECTIONS[SITE_ANALYTICS] && toDomain in BLOCKING_DETAILS[SITE_ANALYTICS])
@@ -170,7 +174,9 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
         BLOCKED_REQUESTS[tab_id][SITE_ANALYTICS] = [];
       }
 
-      BLOCKED_REQUESTS[tab_id][SITE_ANALYTICS].push(original_req);
+      if (BLOCKED_REQUESTS[tab_id][SITE_ANALYTICS].length < MAX_LENGTH) {
+        BLOCKED_REQUESTS[tab_id][SITE_ANALYTICS].push(original_req);
+      }
 
       return {cancel: true};
     }
@@ -217,11 +223,13 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
         BLOCKED_REQUESTS[tab_id][THIRD_PARTY] = [];
       }
 
-      var temp_entry = {
-        "original": original_req,
-        "updated": $.extend(true, {}, details)
+      if (BLOCKED_REQUESTS[tab_id][THIRD_PARTY].length < MAX_LENGTH) {
+        var temp_entry = {
+          "original": original_req,
+          "updated": $.extend(true, {}, details)
+        }
+        BLOCKED_REQUESTS[tab_id][THIRD_PARTY].push(temp_entry);
       }
-      BLOCKED_REQUESTS[tab_id][THIRD_PARTY].push(temp_entry);
     }
 
     console.log("### Finish removing.");
