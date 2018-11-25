@@ -21,7 +21,8 @@ var USER_SELECTIONS = {
 
 var BLOCKING_DETAILS = {},
     STATS = {},
-    MY_FINGERPRINT = {};
+    MY_FINGERPRINT = {},
+    BLOCKED_REQUESTS = {};
 
 $(document).ready(function() {
   fetch("trackers/json/advertising.json")
@@ -93,6 +94,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
   || USER_SELECTIONS[FINGERPRINT][CONTENT_LANG] || USER_SELECTIONS[FINGERPRINT][TIMEZONE];
 
   var ret = {requestHeaders: details.requestHeaders};
+  var original_req = $.extend(true, {}, details);
 
   var tab_id = details.tabId;
   var target = extractHostname(details.url);
@@ -144,9 +146,29 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
 
   // block javascript tracking
   if (need_to_block) {
-    if ((USER_SELECTIONS[ADVERTISING] && toDomain in BLOCKING_DETAILS[ADVERTISING]) ||
-      (USER_SELECTIONS[ADVERTISING] && toDomain in BLOCKING_DETAILS[ADVERTISING]))
+    if (USER_SELECTIONS[ADVERTISING] && toDomain in BLOCKING_DETAILS[ADVERTISING])
     {
+      if (!(tab_id in BLOCKED_REQUESTS)) {
+        BLOCKED_REQUESTS[tab_id] = {};
+      }
+      if (!(ADVERTISING in BLOCKED_REQUESTS[tab_id])) {
+        BLOCKED_REQUESTS[tab_id][ADVERTISING] = [];
+      }
+
+      BLOCKED_REQUESTS[tab_id][ADVERTISING].push(original_req);
+
+      return {cancel: true};
+    } else if (USER_SELECTIONS[SITE_ANALYTICS] && toDomain in BLOCKING_DETAILS[SITE_ANALYTICS])
+    {
+      if (!(tab_id in BLOCKED_REQUESTS)) {
+        BLOCKED_REQUESTS[tab_id] = {};
+      }
+      if (!(SITE_ANALYTICS in BLOCKED_REQUESTS[tab_id])) {
+        BLOCKED_REQUESTS[tab_id][SITE_ANALYTICS] = [];
+      }
+
+      BLOCKED_REQUESTS[tab_id][SITE_ANALYTICS].push(original_req);
+
       return {cancel: true};
     }
   }
@@ -154,21 +176,24 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
   if (need_to_filter) {
     console.log("### Begin to remove third party cookie");
 
-    var idxToRemove = [];
+    var is_updated = false;
     for (var i = 0; i < details.requestHeaders.length;) {
       if (details.requestHeaders[i].name === "Cookie" && USER_SELECTIONS[THIRD_PARTY] === true && is_third_party) {
         console.log("removing header cookie")
         details.requestHeaders.splice(i, 1);
+        is_updated = true;
         continue;
       }
       if (details.requestHeaders[i].name === "User-Agent" && USER_SELECTIONS[USER_AGENT] === true) {
         console.log("removing header user agent");
         details.requestHeaders.splice(i, 1);
+        is_updated = true;
         continue;
       }
       if (details.requestHeaders[i].name === "Accept-Language" && USER_SELECTIONS[CONTENT_LANG] === true) {
         console.log("removing header accept language");
         details.requestHeaders.splice(i, 1);
+        is_updated = true;
         continue;
       }
       i++;
@@ -178,6 +203,22 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
       console.log("update timestamp");
       details.timeStamp = Math.round((new Date("1998-11-11T00:00:00")).getTime() / 1000);
       ret["timeStamp"] = details.timeStamp;
+      is_updated = true;
+    }
+
+    if (is_updated) {
+      if (!(tab_id in BLOCKED_REQUESTS)) {
+        BLOCKED_REQUESTS[tab_id] = {};
+      }
+      if (!(THIRD_PARTY in BLOCKED_REQUESTS[tab_id])) {
+        BLOCKED_REQUESTS[tab_id][THIRD_PARTY] = [];
+      }
+
+      var temp_entry = {
+        "original": original_req,
+        "updated": $.extend(true, {}, details)
+      }
+      BLOCKED_REQUESTS[tab_id][THIRD_PARTY].push(temp_entry);
     }
 
     console.log("### Finish removing.");
@@ -207,6 +248,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       console.log(STATS);
       if (tab_id in STATS) {
         stats = STATS[request.tab_id];
+      }
+      if (tab_id in BLOCKED_REQUESTS) {
+        stats["blocked"] = BLOCKED_REQUESTS[tab_id];
       }
       sendResponse({result: stats});
     }

@@ -30,6 +30,7 @@ $(document).ready(function() {
   	var tabId = tabs[0].id; 
   	if (tabId != null && tabId != undefined)
   	chrome.runtime.sendMessage({"request_type": "stats", "tab_id": tabId, }, function (response) {
+			console.log(response);
   	  if (Object.keys(response).length > 0) {
   	  	if(response["result"] != undefined) {
   	      response = response["result"];
