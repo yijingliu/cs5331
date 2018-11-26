@@ -291,7 +291,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         stats["blocked"] = BLOCKED_REQUESTS[tab_id];
       }
       sendResponse({result: stats});
-    }
+    } else if (request.request_type == "refresh") {
+      console.log("yeah");
+      sendResponse({result: "yeah"});
+      // refresh tabid
+    } 
 });
 
 chrome.tabs.onUpdated.addListener(function(tabId,changeInfo,tab){
