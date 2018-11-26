@@ -323,6 +323,7 @@ function refreshStats(tabId) {
   STATS[tabId]["numbers"][SITE_ANALYTICS] = 0;
   STATS[tabId]["numbers"][THIRD_PARTY] = 0;
   BLOCKED_REQUESTS[tabId] = {};
+  delete TAB_FIRST_TIME[tabId];
 }
 
 function extractHostname(url) {
