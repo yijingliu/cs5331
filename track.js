@@ -2,7 +2,9 @@
 
 window.onbeforeunload = function() {
   console.log("Tab is refreshed! ");
-  chrome.runtime.sendMessage({request_type: "refresh"}, function (response) {
-    console.log(response);
-  });
+  if (chrome.runtime !== undefined && chrome.runtime !== null) {
+    chrome.runtime.sendMessage({request_type: "refresh"}, function (response) {
+      console.log(response);
+    });
+  }
 };
