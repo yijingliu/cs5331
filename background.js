@@ -90,7 +90,7 @@ chrome.runtime.onInstalled.addListener(function() {
 //     console.log(details);
 // }, {urls: ["<all_urls>"]}, ["requestHeaders"]);
 
-chrome.webRequest.onSendHeaders.addListener(function(details) {
+chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
   var need_to_block = USER_SELECTIONS[ADVERTISING] || USER_SELECTIONS[SITE_ANALYTICS];
   var need_to_filter = USER_SELECTIONS[THIRD_PARTY] || USER_SELECTIONS[FINGERPRINT][USER_AGENT]
   || USER_SELECTIONS[FINGERPRINT][CONTENT_LANG] || USER_SELECTIONS[FINGERPRINT][ORIGIN];
@@ -263,7 +263,7 @@ chrome.webRequest.onSendHeaders.addListener(function(details) {
   }
 
   return ret;
-}, {urls: ["<all_urls>"]}, ["requestHeaders"]);
+}, {urls: ["<all_urls>"]}, ["blocking", "requestHeaders"]);
 
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
