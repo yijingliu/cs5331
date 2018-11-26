@@ -85,6 +85,11 @@ chrome.runtime.onInstalled.addListener(function() {
   });
 });
 
+chrome.webRequest.onSendHeaders.addListener(function(details) {
+    console.log("### send request: ");
+    console.log(details);
+}, {urls: ["<all_urls>"]}, ["requestHeaders"]);
+
 chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
   var need_to_block = USER_SELECTIONS[ADVERTISING] || USER_SELECTIONS[SITE_ANALYTICS];
   var need_to_filter = USER_SELECTIONS[THIRD_PARTY] || USER_SELECTIONS[FINGERPRINT][USER_AGENT]
