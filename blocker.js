@@ -8,10 +8,10 @@ $(document).ready(function() {
     $("#third-party-cookie").prop("checked", response["user_selections"]["third-party-cookie"]);
     $("#user-agent").prop("checked", response["user_selections"]["browser-fingerprint"]["user-agent"]);
     $("#content-language").prop("checked", response["user_selections"]["browser-fingerprint"]["content-language"]);
-    $("#timestamp").prop("checked", response["user_selections"]["browser-fingerprint"]["timestamp"]);
+    $("#origin").prop("checked", response["user_selections"]["browser-fingerprint"]["origin"]);
     if (response["user_selections"]["browser-fingerprint"]["user-agent"] 
       && response["user_selections"]["browser-fingerprint"]["content-language"] 
-      && response["user_selections"]["browser-fingerprint"]["timestamp"]) {
+      && response["user_selections"]["browser-fingerprint"]["origin"]) {
       $("#browser-fingerprint").prop("checked", true);
     }
 
@@ -71,7 +71,7 @@ $(document).on("click", "#browser-fingerprint", function() {
   var checked = $(this).prop("checked");
   $("#user-agent").prop("checked", checked);
   $("#content-language").prop("checked", checked);
-  $("#timestamp").prop("checked", checked);
+  $("#origin").prop("checked", checked);
 });
 
 $(document).on("change", "input", function() {
@@ -82,7 +82,7 @@ $(document).on("change", "input", function() {
   message["browser-fingerprint"] = {
       "user-agent": $("#user-agent").prop("checked"),
       "content-language": $("#content-language").prop("checked"), 
-      "timestamp": $("#timestamp").prop("checked")
+      "origin": $("#origin").prop("checked")
   }
 
   chrome.runtime.sendMessage({

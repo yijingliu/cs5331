@@ -6,7 +6,7 @@ var ADVERTISING = "advertising",
     FINGERPRINT = "browser-fingerprint",
     USER_AGENT = "user-agent",
     CONTENT_LANG = "content-language",
-    TIMEZONE = "timestamp";
+    ORIGIN = "origin";
 
 var USER_SELECTIONS = {
   "advertising": false,
@@ -15,7 +15,7 @@ var USER_SELECTIONS = {
   "browser-fingerprint": {
     "user-agent": false,
     "content-language": false,
-    "timestamp": false
+    "origin": false
   }
 };
 
@@ -93,7 +93,7 @@ chrome.webRequest.onSendHeaders.addListener(function(details) {
 chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
   var need_to_block = USER_SELECTIONS[ADVERTISING] || USER_SELECTIONS[SITE_ANALYTICS];
   var need_to_filter = USER_SELECTIONS[THIRD_PARTY] || USER_SELECTIONS[FINGERPRINT][USER_AGENT]
-  || USER_SELECTIONS[FINGERPRINT][CONTENT_LANG] || USER_SELECTIONS[FINGERPRINT][TIMEZONE];
+  || USER_SELECTIONS[FINGERPRINT][CONTENT_LANG] || USER_SELECTIONS[FINGERPRINT][ORIGIN];
 
   var ret = {requestHeaders: details.requestHeaders};
   var original_req = $.extend(true, {}, details);
@@ -217,13 +217,13 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
         is_updated = true;
         continue;
       }
+      if (details.requestHeaders[i].name === "Origin" && USER_SELECTIONS[FINGERPRINT][ORIGIN] === true) {
+        console.log("removing header origin");
+        details.requestHeaders.splice(i, 1);
+        is_updated = true;
+        continue;
+      }
       i++;
-    }
-
-    if (USER_SELECTIONS[FINGERPRINT][TIMEZONE] === true) {
-      console.log("update timestamp");
-      details.timeStamp = Math.round((new Date("1998-11-11T00:00:00")).getTime() / 1000);
-      is_updated = true;
     }
 
     if (contains_cookie === true) {
@@ -297,11 +297,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 chrome.tabs.onUpdated.addListener(function(tabId,changeInfo,tab){
   if (changeInfo.url === undefined) {
     console.log("Tab " + tabId + " refreshed!");
-    STATS[tabId] = {"numbers": {"total": 0}};
-    STATS[tabId]["numbers"][ADVERTISING] = 0;
-    STATS[tabId]["numbers"][SITE_ANALYTICS] = 0;
-    STATS[tabId]["numbers"][THIRD_PARTY] = 0;
-    BLOCKED_REQUESTS[tabId] = {};
+    // STATS[tabId] = {"numbers": {"total": 0}};
+    // STATS[tabId]["numbers"][ADVERTISING] = 0;
+    // STATS[tabId]["numbers"][SITE_ANALYTICS] = 0;
+    // STATS[tabId]["numbers"][THIRD_PARTY] = 0;
+    // BLOCKED_REQUESTS[tabId] = {};
   }
 });
 
