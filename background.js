@@ -292,10 +292,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       }
       sendResponse({result: stats});
     } else if (request.request_type == "refresh") {
-      console.log("yeah");
+      console.log("### Tab id is: " + sender.tab.id );
       refreshStats(sender.tab.id);
-      sendResponse({result: "yeah"});
-      // refresh tabid
+      sendResponse({result: "refreshed"});
     } 
 });
 
