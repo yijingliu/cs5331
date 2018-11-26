@@ -22,7 +22,8 @@ var USER_SELECTIONS = {
 var BLOCKING_DETAILS = {},
     STATS = {},
     MY_FINGERPRINT = {},
-    BLOCKED_REQUESTS = {};
+    BLOCKED_REQUESTS = {},
+    TAB_FIRST_TIME = {};
 
 var MAX_LENGTH = 1000;
 
@@ -135,9 +136,13 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
       console.log("Tab does not exist.")
     }
 
+    var is_first_time = false;
     if (initiator === "") {
       if (details.initiator == null) {
         initiator = "www.cs5331_g1.com";
+        if (!(tab_id in TAB_FIRST_TIME)) {
+          is_first_time = true;
+        }
       } else {
         initiator = details.initiator.split("//")[1];
       }
@@ -145,14 +150,22 @@ chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
     var fromDomain = psl.parse(initiator).domain;
     if (fromDomain == null) {
       fromDomain = "cs5331_g1";
+      if (!(tab_id in TAB_FIRST_TIME)) {
+        is_first_time = true;
+      }
     } else {
       fromDomain = fromDomain.split(".")[0];
     }
     
     console.log("### fromDomain: " + fromDomain + " ### toDomain: " + toDomain);
     if (fromDomain !== toDomain) {
-      is_third_party = true;
-      updateStats(tab_id, THIRD_PARTY, toDomain, target);
+      if (is_first_time === true) {
+        console.log("First time thirdparty");
+        TAB_FIRST_TIME[tab_id] = true;
+      } else {
+        is_third_party = true;
+        updateStats(tab_id, THIRD_PARTY, toDomain, target);
+      }
     }
   }
 
